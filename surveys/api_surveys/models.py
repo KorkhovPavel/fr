@@ -16,16 +16,18 @@ def validator_date(value):
         raise ValidationError('Purchase_Date cannot be in the future.')
 
 
-# def validator_question_type(value):
-#     """
-#     question type check, type must not be Text answer
-#     :param value:
-#     :return:
-#     """
-#     d = Question.objects.filter(question_type__in=('Single choice answer',
-#                                                    'Multiple choice answer')).all()
-#     if value not in d:
-#         raise ValidationError('Error, type question it should be single choice answer or multiple choice answer')
+def validator_question_type(value):
+    """
+    checking question type to connect answer options to the question
+    :param value:
+    :return:
+    """
+    type_good = Question.objects.filter(question_type__in=('Single choice answer', 'Multiple choice answer')).all()
+    type_no_good = Question.objects.filter(question_type='Text answer').all()
+    if value not in type_good:
+        raise ValidationError('Error, type question it should be single choice answer or multiple choice answer')
+    if value in type_no_good:
+        raise ValidationError('Error, selection options cannot be connected to the Text answer type ')
 
 
 # Models
@@ -38,7 +40,7 @@ class Survey(models.Model):
 
 class Question(models.Model):
     question_text = models.CharField(max_length=250, verbose_name='question_text')
-    survey_id = models.ForeignKey('Survey', on_delete=models.PROTECT)
+    survey_id = models.ForeignKey('Survey', on_delete=models.PROTECT, related_name='question', )
     QUESTION_TYPE = [
         ('Text answer', 'Text answer'),
         ('Single choice answer', 'Single choice answer'),
@@ -48,7 +50,8 @@ class Question(models.Model):
 
 
 class Choices(models.Model):
-    question_id = models.ForeignKey('Question', on_delete=models.PROTECT)
+    question_id = models.ForeignKey('Question', on_delete=models.PROTECT, related_name='choices',
+                                    validators=[validator_question_type])
     choices_answer = models.CharField(max_length=250, verbose_name='choices_answer')
 
 

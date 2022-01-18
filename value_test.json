@@ -1,0 +1,34 @@
+{
+    "title": "Первый опрос",
+    "start_date": "2022-04-11",
+    "end_data": "2022-04-11",
+    "description": "Описание первого опроса",
+    "question": [{
+        "question_type":"Single choice answer",
+        "question_text":"Первый вопрос первого опроса",
+        "choices":[{
+            "choices_answer":"Первый вариант первого вопроса первого опроса"
+        },
+        {
+            "choices_answer":"Второй вариант первого вопроса первого опроса"
+        }]
+    },
+    {
+        "question_type":"Multiple choice answer",
+        "question_text":"Второй вопрос первого опроса",
+        "choices":[{
+            "choices_answer":"Первый вариант второго вопроса первого опроса"
+        },
+        {
+            "choices_answer":"Второй вариант второго вопроса первого опроса"
+        },
+        {
+            "choices_answer":"Третий вариант второго вопроса первого опроса"
+        }]
+    },
+        {
+        "question_type":"Text answer",
+        "question_text":"Третий вопрос первого опроса"
+    }
+    ]
+}

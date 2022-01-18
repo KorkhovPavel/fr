@@ -4,8 +4,6 @@ from api_surveys.views import *
 urlpatterns = [
     # admin
     path('survey/create/', SurveyCreateView.as_view()),
-    path('question/create/', QuestionCreateView.as_view()),
-    path('choices/create/', ChoicesCreateView.as_view()),
     path('survey/detail/<int:pk>/', SurveyUpdateDeleteView.as_view()),
     path('question/create/<int:pk>/', QuestionUpdateDeleteView.as_view()),
     path('choices/create/<int:pk>/', ChoicesUpdateDeleteView.as_view()),

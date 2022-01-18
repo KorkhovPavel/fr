@@ -14,27 +14,10 @@ class SurveyCreateView(generics.CreateAPIView):
     serializer_class = SurveyCreateSerializers
 
 
-class QuestionCreateView(generics.CreateAPIView):
-    # permission_classes = (IsAuthenticated,)
-    serializer_class = QuestionCreateSerializers
-
-
-class ChoicesCreateView(generics.CreateAPIView):
-    # permission_classes = (IsAuthenticated,)
-    serializer_class = ChoicesCreateSerializers
-
-    def post(self, request, *args, **kwargs):
-        d = Question.objects.filter(question_type__in=('Single choice answer',
-                                                       'Multiple choice answer')).values_list('id', flat=True).all()
-        if int(request.data['question_id']) in list(d):
-            return self.create(request, *args, **kwargs)
-        return Response(data='Error, type question it should be single choice answer or multiple choice answer')
-
-
 class SurveyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = (IsAuthenticated,)
     queryset = Survey.objects.all()
-    serializer_class = SurveyUpdateDeleteSerializers
+    serializer_class = SurveyCreateSerializers
 
 
 class QuestionUpdateDeleteView(generics.RetrieveUpdateAPIView):
@@ -58,3 +41,18 @@ class SurveyActiveView(generics.ListAPIView):
 
 class AnswerCreateView(generics.CreateAPIView):
     serializer_class = AnswerCreateSerializers
+
+    def post(self, request, *args, **kwargs):
+        single_choice_answer = Question.objects.filter(question_type='Single choice answer'). \
+            values_list('id', flat=True).values_list('id', flat=True).all()
+        multiple_choice_answer = Question.objects.filter(question_type='Multiple choice answer'). \
+            values_list('id', flat=True).values_list('id', flat=True).all()
+        if int(request.data['question_id']) in list(single_choice_answer):
+            valid_answer = Choices.objects.filter(question_id=request.data['question_id']). \
+                values_list('choices_answer', flat=True).all()
+            if request.data['answer'] in list(valid_answer):
+                return self.create(request, *args, **kwargs)
+            return Response(data=f'Error, choose one answer from {list(valid_answer)}')
+        if int(request.data['question_id']) in list(multiple_choice_answer):
+            pass
+        return self.create(request, *args, **kwargs)
