@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from datetime import datetime
 from pytz import timezone
 from rest_framework.response import Response
@@ -17,21 +17,17 @@ class SurveyCreateView(generics.CreateAPIView):
 class SurveyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = (IsAuthenticated,)
     queryset = Survey.objects.all()
-    serializer_class = SurveyCreateSerializers
+    serializer_class = SurveyUpdateDeleteSerializers
 
-
-class QuestionUpdateDeleteView(generics.RetrieveUpdateAPIView):
-    # permission_classes = (IsAuthenticated,)
-    queryset = Question.objects.all()
-    serializer_class = QuestionUpdateDeleteSerializers
-
-
-class ChoicesUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    # permission_classes = (IsAuthenticated,)
-    queryset = Choices.objects.all()
-    serializer_class = ChoicesUpdateDeleteSerializers
-
-
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        for q in instance.question.all():
+            if q.choices:
+                for c in q.choices.all():
+                    c.delete()
+            q.delete()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 # user
 class SurveyActiveView(generics.ListAPIView):
     now_utc = datetime.now(timezone('Europe/Moscow'))

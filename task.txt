@@ -60,3 +60,75 @@ class AlbumSerializer(serializers.ModelSerializer):
         for track_data in tracks_data:
             Track.objects.create(album=album, **track_data)
         return album
+
+      def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        # Unless the application properly enforces that this field is
+        # always set, the following could raise a `DoesNotExist`, which
+        # would need to be handled.
+        profile = instance.profile
+
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+
+        profile.is_premium_member = profile_data.get(
+            'is_premium_member',
+            profile.is_premium_member
+        )
+        profile.has_support_contract = profile_data.get(
+            'has_support_contract',
+            profile.has_support_contract
+         )
+        profile.save()
+
+        return instance
+
+
+
+
+
+
+
+
+
+class EmployeeEvent(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    event_name = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+
+class EmployeeEvent_Users(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    employee_event = models.ForeignKey(EmployeeEvent, on_delete=models.CASCADE,  related_name='employee_event_employee_list')
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employeeEvent_employee')
+
+class EmployeeEventUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeEvent_Users
+        fields = ('id', 'employee',)
+
+class EmployeeEventSerializer(serializers.ModelSerializer):
+    employee_event_users = EmployeeEventUserSerializer( required=True, many=True)
+
+class Meta:
+    model = EmployeeEvent
+    fields = ('event_name', 'start_date', 'end_date', 'employee_event_users', )
+
+
+def update(self, instance, validated_data):
+    instance.event_name = validated_data['event_name']
+    instance.start_date = validated_data['start_date']
+    instance.end_date = validated_data['end_date']
+
+    for employee_event_user in validated_data['employee_event_users']:
+        employee_event_user_id = employee_event_user.get('employee_id', None)
+        if employee_event_user_id:
+            emp_user = EmployeeEvent_Users.objects.get(id=employee_event_user_id, employee_event=instance)
+            emp_user.employee = employee_event_user.get('employee', emp_user.employee)
+            emp_user.save()
+        else:
+            user = EmployeeEvent_Users.objects.create(employee_event=instance, **employee_event_user)
+            user.save()
+            instance.employee_event_users.add(user)
