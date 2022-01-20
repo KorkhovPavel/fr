@@ -2,11 +2,9 @@ from rest_framework import generics, status
 from datetime import datetime
 from pytz import timezone
 from rest_framework.response import Response
-
-from api_surveys.models import Question, Choices, Survey
-from api_surveys.serializers import SurveyCreateSerializers, QuestionCreateSerializers, ChoicesCreateSerializers, \
-    SurveyUpdateDeleteSerializers, ChoicesUpdateDeleteSerializers, QuestionUpdateDeleteSerializers, \
-    SurveyViewActiveSerializers, AnswerCreateSerializers
+from api_surveys.models import Survey, Answers, UserSurvey
+from api_surveys.serializers import SurveyCreateSerializers, SurveyUpdateDeleteSerializers, \
+    SurveyViewActiveSerializers, UserSurveyCreateSerializers, CompletedUserSurveysSerializers
 
 
 class SurveyCreateView(generics.CreateAPIView):
@@ -28,27 +26,20 @@ class SurveyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
             q.delete()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 # user
 class SurveyActiveView(generics.ListAPIView):
     now_utc = datetime.now(timezone('Europe/Moscow'))
-    queryset = Survey.objects.filter(start_date__lte=now_utc.date(), end_data__gte=now_utc.date()).all()
+    queryset = Survey.objects.filter(start_date__lte=now_utc.date(), end_date__gte=now_utc.date()).all()
     serializer_class = SurveyViewActiveSerializers
 
 
-class AnswerCreateView(generics.CreateAPIView):
-    serializer_class = AnswerCreateSerializers
+class AnswerCreateView(generics.ListAPIView):
+    serializer_class = UserSurveyCreateSerializers
 
-    def post(self, request, *args, **kwargs):
-        single_choice_answer = Question.objects.filter(question_type='Single choice answer'). \
-            values_list('id', flat=True).values_list('id', flat=True).all()
-        multiple_choice_answer = Question.objects.filter(question_type='Multiple choice answer'). \
-            values_list('id', flat=True).values_list('id', flat=True).all()
-        if int(request.data['question_id']) in list(single_choice_answer):
-            valid_answer = Choices.objects.filter(question_id=request.data['question_id']). \
-                values_list('choices_answer', flat=True).all()
-            if request.data['answer'] in list(valid_answer):
-                return self.create(request, *args, **kwargs)
-            return Response(data=f'Error, choose one answer from {list(valid_answer)}')
-        if int(request.data['question_id']) in list(multiple_choice_answer):
-            pass
-        return self.create(request, *args, **kwargs)
+
+class DetailUserView(generics.CreateAPIView):
+    queryset = Answers.objects.filter().all()
+    print(UserSurvey.objects.select_related('user_survey_question'))
+    serializer_class = CompletedUserSurveysSerializers

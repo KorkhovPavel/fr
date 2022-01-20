@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 # validators
-def validator_date(value):
+def survey_validator_date(value):
     """
     check date, be greater than current
     :param value:
@@ -16,7 +16,7 @@ def validator_date(value):
         raise ValidationError('Purchase_Date cannot be in the future.')
 
 
-def validator_question_type(value):
+def choices_validator_question_type(value):
     """
     checking question type to connect answer options to the question
     :param value:
@@ -33,8 +33,8 @@ def validator_question_type(value):
 # Models
 class Survey(models.Model):
     title = models.CharField(max_length=50, verbose_name='title')
-    start_date = models.DateField(verbose_name='start_date', validators=[validator_date])
-    end_data = models.DateField(verbose_name='end_data', validators=[validator_date])
+    start_date = models.DateField(verbose_name='start_date', validators=[survey_validator_date])
+    end_date = models.DateField(verbose_name='end_date', validators=[survey_validator_date])
     description = models.TextField(verbose_name='description')
 
 
@@ -51,12 +51,22 @@ class Question(models.Model):
 
 class Choices(models.Model):
     question_id = models.ForeignKey('Question', on_delete=models.PROTECT, related_name='choices',
-                                    validators=[validator_question_type])
+                                    validators=[choices_validator_question_type])
     choices_answer = models.CharField(max_length=250, verbose_name='choices_answer')
 
 
-class Answers(models.Model):
-    user_id = models.IntegerField(verbose_name='user_id', null=True, blank=True, )
-    answer = models.CharField(max_length=250, verbose_name='answer')
-    question_id = models.ForeignKey('Question', on_delete=models.PROTECT)
+# answer
+class UserSurvey(models.Model):
+    user_id = models.IntegerField(verbose_name='user_id', null=True, blank=True)
     survey_id = models.ForeignKey('Survey', on_delete=models.PROTECT)
+
+
+class UserSurveyQuestion(models.Model):
+    question_id = models.ForeignKey('Question', on_delete=models.PROTECT)
+    user_survey_id = models.ForeignKey('UserSurvey', on_delete=models.PROTECT, related_name='user_survey_question')
+
+
+class Answers(models.Model):
+    answer_text = models.CharField(max_length=250, verbose_name='answer', null=True, blank=True, )
+    choices_answer_id = models.IntegerField(verbose_name='choices', null=True, blank=True, )
+    user_survey_question_id = models.ForeignKey('UserSurveyQuestion', on_delete=models.PROTECT, related_name='answers')
