@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api_surveys',
     'rest_framework.authtoken',
-    # 'djoser',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +132,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
