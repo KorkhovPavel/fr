@@ -1,21 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from pytz import timezone
-from datetime import datetime
 
 
 # validators
-def survey_validator_date(value):
-    """
-    check date, be greater than current
-    :param value:
-    :return:
-    """
-    now_utc = datetime.now(timezone('Europe/Moscow'))
-    if value < now_utc.date():
-        raise ValidationError('Purchase_Date cannot be in the future.')
-
-
 def choices_validator_question_type(value):
     """
     checking question type to connect answer options to the question
@@ -33,8 +20,8 @@ def choices_validator_question_type(value):
 # Models
 class Survey(models.Model):
     title = models.CharField(max_length=50, verbose_name='title')
-    start_date = models.DateField(verbose_name='start_date', validators=[survey_validator_date])
-    end_date = models.DateField(verbose_name='end_date', validators=[survey_validator_date])
+    start_date = models.DateField(verbose_name='start_date')
+    end_date = models.DateField(verbose_name='end_date')
     description = models.TextField(verbose_name='description')
 
 
@@ -62,8 +49,8 @@ class UserSurvey(models.Model):
 
 
 class UserSurveyQuestion(models.Model):
-    question_id = models.ForeignKey('Question', on_delete=models.PROTECT)
     user_survey_id = models.ForeignKey('UserSurvey', on_delete=models.PROTECT, related_name='user_survey_question')
+    question_id = models.ForeignKey('Question', on_delete=models.PROTECT, related_name='question')
 
 
 class Answers(models.Model):
