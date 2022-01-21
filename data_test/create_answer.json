@@ -1,0 +1,23 @@
+{
+    "user_id" : "11",
+    "survey_id":"1",
+    "user_survey_question" : [{
+                                "question_id": "1",
+                                  "answers":[{
+                                                "choices_answer_id": "2"
+                                                }]
+                            },
+                            {
+                                "question_id": "2",
+                                 "answers":[{
+                                                "choices_answer_id": "3"
+                                                },
+                                                {"choices_answer_id": "4"}]
+                            },
+                            {
+                                "question_id": "3",
+                                "answers":[{
+                                                "answer_text": "Текстовый ответ"
+                                                }]
+                            }]
+}

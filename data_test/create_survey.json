@@ -1,9 +1,7 @@
-
-//создание опроса, вопросов, вариантов ответов.
 {
     "title": "Первый опрос",
-    "start_date": "2022-04-11",
-    "end_data": "2022-04-11",
+    "start_date": "2022-04-21",
+    "end_date": "2022-04-28",
     "description": "Описание первого опроса",
     "question": [{
         "question_type":"Single choice answer",
@@ -33,31 +31,4 @@
         "question_text":"Третий вопрос первого опроса"
     }
     ]
-};
-
-
-
-//создание ответов на вопросе в опросе.
-{
-    "user_id" : "11",
-    "survey_id":"1",
-    "user_survey_question" : [{
-                                "question_id": "1",
-                                  "answers":[{
-                                                "choices_answer_id": "1"
-                                                }]
-                            },
-                            {
-                                "question_id": "2",
-                                 "answers":[{
-                                                "choices_answer_id": "1"
-                                                },
-                                                {"choices_answer_id": "2"}]
-                            },
-                            {
-                                "question_id": "3",
-                                "answers":[{
-                                                "answer_text": "Текстовый ответ"
-                                                }]
-                            }]
 }
