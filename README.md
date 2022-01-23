@@ -25,6 +25,7 @@
 
 
 
+
 **Инструкция по развертыванию приложения**
 
 1. Открыть терминал
@@ -47,7 +48,7 @@
 1. Добавить опрос, вопросы, варианты ответов(запрос POST)
 `http://127.0.0.1:8000/api/v1/api_surveys/survey/create/`
 
- Пример запроса: test_data/create_survey.json (что бы опрос был активный меняем дату начала на сегодня)
+ Пример запроса: [create_survey](https://github.com/KorkhovPavel/fr/tree/master/data_test/create_survey.json)  (что бы опрос был активный меняем дату начала на сегодня)
  
  Описание:
   - создать один опрос
@@ -56,7 +57,7 @@
 2. Изменить опрос, вопросы, варианты ответов(запросы DELETE,PUT)
  `http://127.0.0.1:8000/api/v1/api_surveys/survey/upload-del/id/`
  
-  Пример запроса(изменена дата окончания опроса и текст последнего вопроса): test_data/create_survey.json
+  Пример запроса(изменена дата окончания опроса и текст последнего вопроса): [update_survey](https://github.com/KorkhovPavel/fr/tree/master/data_test/update_survey.json)
   
   Описание:
   - вместо id номер опроса
@@ -73,7 +74,7 @@
 4. Прохождение опроса (запрос POST)
 `http://127.0.0.1:8000/api/v1/api_surveys/answer/create/`
 
- Пример запроса: test_data/create_answer.json
+ Пример запроса: [create_answer](https://github.com/KorkhovPavel/fr/tree/master/data_test/create_answer.json) 
  
  Описание:
   - чтобы персонализировать ответы введи id, можно анонимно
